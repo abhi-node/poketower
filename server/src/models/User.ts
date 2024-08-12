@@ -33,7 +33,7 @@ const pokemonEntrySchema = new Schema<IPokemonEntry>({
 
 const pokemonTeamSchema = new Schema<IPokemonTeam>({
     name: { type: String, required: true },
-    team: { type: [pokemonEntrySchema], required: true, validate: [(val: number[]) => {return val.length == 6}, '{PATH} exceeds the limit of 6'] },
+    team: { type: [pokemonEntrySchema], required: true, validate: [(val: number[]) => {return val.length <= 6}, '{PATH} exceeds the limit of 6'] },
 });
 
 const userSchema = new Schema<IUserDocument>({
