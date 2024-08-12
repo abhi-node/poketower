@@ -1,6 +1,10 @@
 {
   "dependencies": {
-    "express": "^4.19.2"
+    "@types/mongodb": "^4.0.7",
+    "@types/mongoose": "^5.11.97",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.2"
   },
   "scripts": {
     "build": "tsc"
