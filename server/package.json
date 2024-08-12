@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^22.2.0"
+  }
+}
