@@ -35,11 +35,7 @@ async function createUser() {
     }
 }
 
-const app = express();
-const port = 3000;
-
-
-app.listen(port, async () => {
+const connectDB = async () => {
     try {
         await mongoose.connect('mongodb+srv://abhibalagurusamy:ozGor78cw8x6nfoK@cluster0.t4cyr.mongodb.net/');
         console.log('MongoDB connected successfully.');
@@ -47,6 +43,25 @@ app.listen(port, async () => {
         console.error('MongoDB connection error:', error);
         process.exit(1); // Exit process with failure
     }
+}
+
+const app = express();
+const port = 3000;
+
+app.post('/create', (req, res) => {
+
+});
+
+app.put('/update', (req, res) => {
+
+});
+
+app.get('/retrieve', (req, res) => {
+
+});
+
+app.listen(port, async () => {
+    await connectDB();
     await createUser();
 });
 
