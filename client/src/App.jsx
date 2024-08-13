@@ -1,10 +1,10 @@
-import Battle from './Battle'
+import Builder from './Builder'
 
 function App() {
 
   return (
     <>
-      <Battle />
+      <Builder />
     </>
   )
 }
