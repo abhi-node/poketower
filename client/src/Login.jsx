@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 
 function Login(props) {
@@ -6,6 +6,12 @@ function Login(props) {
     const [password, setPassword] = React.useState('');
     const [alert, setAlert] = React.useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (props.logged) {
+            navigate("/");
+        }
+    }, [props.logged, navigate]);
 
     const login = async (event) => {
         event.preventDefault();

@@ -1,13 +1,20 @@
 import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 function Builder(props) {
   const navigate = useNavigate();
-  const sendTeam = (event) => {
 
+  useEffect(() => {
+    if (!props.logged) {
+      navigate("/login");
+    }
+  }, [props.logged, navigate]);
+
+  const sendTeam = (event) => {
+    
   }
 
-  if (props.user === null) {
-    navigate("");
+  if (!props.logged) {
     return null;
   }
   return (

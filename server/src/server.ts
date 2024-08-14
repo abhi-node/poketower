@@ -44,6 +44,7 @@ const createUser = async (username: string, password: string) => {
 
         await newUser.save();
         console.log('User created successfully:', newUser);
+        return newUser;
     } catch (error) {
         console.error('Error creating user:', error);
     }
@@ -72,8 +73,11 @@ app.post('/api/login', async(req, res) => {
     }
 });
 
-app.post('/api/signup', (req, res) => {
-
+app.post('/api/signup', async (req, res) => {
+    const {username, password} = req.body;
+    console.log(username, password);
+    const current_user = await createUser(username, password);
+    res.json(current_user);
 });
 
 app.get('/api/retrieve', (req, res) => {

@@ -53,6 +53,7 @@ const createUser = (username, password) => __awaiter(void 0, void 0, void 0, fun
         });
         yield newUser.save();
         console.log('User created successfully:', newUser);
+        return newUser;
     }
     catch (error) {
         console.error('Error creating user:', error);
@@ -80,8 +81,12 @@ app.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.json(current_user);
     }
 }));
-app.post('/api/signup', (req, res) => {
-});
+app.post('/api/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, password } = req.body;
+    console.log(username, password);
+    const current_user = yield createUser(username, password);
+    res.json(current_user);
+}));
 app.get('/api/retrieve', (req, res) => {
 });
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
