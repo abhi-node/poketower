@@ -1,31 +1,45 @@
 import express from 'express'
 import {getPokemonData} from './api/getPokemonData';
 import { Pokemon } from './types/Pokemon/Pokemon';
+import cors from 'cors';
 import User from './models/User';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
-async function createUser() {
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+const getUser = async (username: string, password: string) => {
     try {
+        const user = await User.findOne({ username });
+        if (!user) {
+            console.log('User not found');
+            return null;
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
+            console.log('Authentication successful:', user);
+            return user;
+        } else {
+            console.log('Invalid password');
+            return null;
+        }
+
+    } catch (error) {
+        console.error('Error during authentication:', error);
+        throw error;
+    }
+}
+
+const createUser = async (username: string, password: string) => {
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
-            username: 'AshKetchum',
-            teams: [
-                {
-                    name: 'Pikachu Squad',
-                    team: [
-                        {
-                            name: 'Pikachu',
-                            moves: ['Thunderbolt', 'Quick Attack', 'Iron Tail', 'Electro Ball'],
-                            ev_spread: [252, 0, 0, 252, 4, 0],
-                            iv_spread: [31, 31, 31, 31, 31, 31],
-                            item: 'Light Ball',
-                            ability: 'Static',
-                            nature: 'Jolly',
-                        },
-                        // Add other Pokémon entries here
-                    ],
-                },
-            ],
-            level: 10,
+            username: username,
+            password: hashedPassword,
+            teams: [],
+            level: 1,
         });
 
         await newUser.save();
@@ -45,23 +59,29 @@ const connectDB = async () => {
     }
 }
 
-const app = express();
 const port = 3000;
 
-app.post('/create', (req, res) => {
+app.post('/api/login', async(req, res) => {
+    const {username, password} = req.body;
+    console.log(username, password);
+    const current_user = await getUser(username, password);
+    if (current_user === null) {
+        res.status(400).send(new Error('Username or Password incorrect'));
+    } else {
+        res.json(current_user);
+    }
+});
+
+app.post('/api/signup', (req, res) => {
 
 });
 
-app.put('/update', (req, res) => {
-
-});
-
-app.get('/retrieve', (req, res) => {
+app.get('/api/retrieve', (req, res) => {
 
 });
 
 app.listen(port, async () => {
+    console.log(port);
     await connectDB();
-    await createUser();
 });
 

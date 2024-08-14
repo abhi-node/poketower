@@ -16,6 +16,7 @@ const pokemonTeamSchema = new mongoose_1.Schema({
 });
 const userSchema = new mongoose_1.Schema({
     username: { type: String, required: true, unique: true },
+    password: { type: String, required: true, unique: true },
     teams: { type: [pokemonTeamSchema], required: true },
     level: { type: Number, required: true, min: 1 },
 });

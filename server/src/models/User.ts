@@ -17,6 +17,7 @@ interface IPokemonTeam {
 
 export interface IUserDocument extends Document {
     username: string;
+    password: string;
     teams: IPokemonTeam[];
     level: number;
 }
@@ -38,6 +39,7 @@ const pokemonTeamSchema = new Schema<IPokemonTeam>({
 
 const userSchema = new Schema<IUserDocument>({
     username: { type: String, required: true, unique: true },
+    password: { type: String, required: true, unique: true },
     teams: { type: [pokemonTeamSchema], required: true },
     level: { type: Number, required: true, min: 1 },
 });
