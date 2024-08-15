@@ -2,6 +2,7 @@ import Builder from './Builder'
 import Login from './Login'
 import Signup from './Signup'
 import Home from './Home'
+import Navbar from './Navbar'
 import React, {useState, useEffect} from 'react'
 import { createBrowserRouter, RouterProvider, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -57,6 +58,7 @@ function App() {
   ]);
   return (
     <>
+      <Navbar user={user} logged={logged}/>
       <RouterProvider router={router} />
     </>
   )

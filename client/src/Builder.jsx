@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import Navbar from './Navbar';
 
 function Builder(props) {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function Builder(props) {
   }, [props.logged, navigate]);
 
   const sendTeam = (event) => {
-    
+
   }
 
   if (!props.logged) {
