@@ -2,65 +2,20 @@ import express from 'express'
 import {getPokemonData} from './api/getPokemonData';
 import { Pokemon } from './types/Pokemon/Pokemon';
 import cors from 'cors';
-import User from './models/User';
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
+import { getUser, createUser } from './db/retrieve_user'
+import { connectDB } from './db/connect'
+import { getAllPokemonNames } from './api/getAllPokemonNames';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const getUser = async (username: string, password: string) => {
-    try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            console.log('User not found');
-            return null;
-        }
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (isMatch) {
-            console.log('Authentication successful:', user);
-            return user;
-        } else {
-            console.log('Invalid password');
-            return null;
-        }
-
-    } catch (error) {
-        console.error('Error during authentication:', error);
-        throw error;
-    }
-}
-
-const createUser = async (username: string, password: string) => {
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({
-            username: username,
-            password: hashedPassword,
-            teams: [],
-            level: 1,
-        });
-
-        await newUser.save();
-        console.log('User created successfully:', newUser);
-        return newUser;
-    } catch (error) {
-        console.error('Error creating user:', error);
-    }
-}
-
-const connectDB = async () => {
-    try {
-        await mongoose.connect('mongodb+srv://abhibalagurusamy:ozGor78cw8x6nfoK@cluster0.t4cyr.mongodb.net/');
-        console.log('MongoDB connected successfully.');
-    } catch (error) {
-        console.error('MongoDB connection error:', error);
-        process.exit(1); // Exit process with failure
-    }
-}
-
 const port = 3000;
+
+interface nameIcon {
+    name: string;
+    icon: string;
+}
 
 app.post('/api/login', async(req, res) => {
     const {username, password} = req.body;
@@ -80,12 +35,24 @@ app.post('/api/signup', async (req, res) => {
     res.json(current_user);
 });
 
-app.get('/api/retrieve', (req, res) => {
-
+app.get('/api/pokemon/list', async (req, res) => {
+    const nameList = await getAllPokemonNames();
+    if (nameList === null) {
+        res.status(400).send(new Error('API Error'));
+    } else {
+        let iconList: string[] = [];
+        let retList: nameIcon[] = [];
+        await Promise.all(nameList.map(async (name) => {
+            const pkmn: Pokemon = await getPokemonData(name) as Pokemon;
+            console.log(pkmn.sprites.front_default);
+            retList.push({name: name, icon: await pkmn.sprites.front_default} as nameIcon)
+        }));
+        console.log(retList);
+        res.json({list: retList});
+    }
 });
 
 app.listen(port, async () => {
-    console.log(port);
     await connectDB();
 });
 

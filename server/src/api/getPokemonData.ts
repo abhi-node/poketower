@@ -10,7 +10,6 @@ export async function getPokemonData(pokemon: string) {
     
         const pokemonJSON: Pokemon | unknown = await response.json() as Pokemon;
 
-        console.log(pokemonJSON);
         return pokemonJSON;
       } catch (error: any) {
         console.error(error.message);

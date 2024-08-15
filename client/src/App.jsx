@@ -3,13 +3,14 @@ import Login from './Login'
 import Signup from './Signup'
 import Home from './Home'
 import Navbar from './Navbar'
-import React, {useState, useEffect} from 'react'
+import './tailwind/tailwind.css'
+import React, { useState, useEffect } from 'react'
 import { createBrowserRouter, RouterProvider, Route, Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.css';
 
 function App() {
   const [user, setUser] = useState(null);
   const [logged, setLogged] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -17,6 +18,7 @@ function App() {
       setUser(JSON.parse(storedUser));
       setLogged(true);
     }
+    setLoading(false);
   }, []);
   const loginCallback = (retrieved_user) => {
     localStorage.setItem('user', JSON.stringify(retrieved_user));
@@ -32,33 +34,33 @@ function App() {
     {
       path: "/",
       element: (
-        <Home user={user} callback={logoutCallback} logged={logged}/>
+        <Home user={user} callback={logoutCallback} logged={logged} loading={loading}/>
       ),
     },
     {
       path: "/builder",
       element: (
         <>
-          <Builder user={user} logged={logged}/>
+          <Builder user={user} logged={logged} loading={loading}/>
         </>
       ),
     },
     {
       path: "/login",
       element: (
-        <Login callback={loginCallback} logged={logged}/>
+        <Login callback={loginCallback} logged={logged} />
       ),
     },
     {
       path: "/signup",
       element: (
-        <Signup callback={loginCallback} logged={logged}/>
+        <Signup callback={loginCallback} logged={logged} />
       ),
     }
   ]);
   return (
     <>
-      <Navbar user={user} logged={logged}/>
+      <Navbar callback={logoutCallback} user={user} logged={logged} />
       <RouterProvider router={router} />
     </>
   )

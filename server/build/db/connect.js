@@ -8,21 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPokemonData = getPokemonData;
-function getPokemonData(pokemon) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const url = 'https://pokeapi.co/api/v2/pokemon/'.concat(pokemon.toLowerCase());
-        try {
-            const response = yield fetch(url);
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
-            }
-            const pokemonJSON = yield response.json();
-            return pokemonJSON;
-        }
-        catch (error) {
-            console.error(error.message);
-        }
-    });
-}
+exports.connectDB = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
+const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield mongoose_1.default.connect('mongodb+srv://abhibalagurusamy:ozGor78cw8x6nfoK@cluster0.t4cyr.mongodb.net/');
+        console.log('MongoDB connected successfully.');
+    }
+    catch (error) {
+        console.error('MongoDB connection error:', error);
+        process.exit(1); // Exit process with failure
+    }
+});
+exports.connectDB = connectDB;

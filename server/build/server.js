@@ -13,67 +13,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const getPokemonData_1 = require("./api/getPokemonData");
 const cors_1 = __importDefault(require("cors"));
-const User_1 = __importDefault(require("./models/User"));
-const mongoose_1 = __importDefault(require("mongoose"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const retrieve_user_1 = require("./db/retrieve_user");
+const connect_1 = require("./db/connect");
+const getAllPokemonNames_1 = require("./api/getAllPokemonNames");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-const getUser = (username, password) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield User_1.default.findOne({ username });
-        if (!user) {
-            console.log('User not found');
-            return null;
-        }
-        const isMatch = yield bcrypt_1.default.compare(password, user.password);
-        if (isMatch) {
-            console.log('Authentication successful:', user);
-            return user;
-        }
-        else {
-            console.log('Invalid password');
-            return null;
-        }
-    }
-    catch (error) {
-        console.error('Error during authentication:', error);
-        throw error;
-    }
-});
-const createUser = (username, password) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const newUser = new User_1.default({
-            username: username,
-            password: hashedPassword,
-            teams: [],
-            level: 1,
-        });
-        yield newUser.save();
-        console.log('User created successfully:', newUser);
-        return newUser;
-    }
-    catch (error) {
-        console.error('Error creating user:', error);
-    }
-});
-const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield mongoose_1.default.connect('mongodb+srv://abhibalagurusamy:ozGor78cw8x6nfoK@cluster0.t4cyr.mongodb.net/');
-        console.log('MongoDB connected successfully.');
-    }
-    catch (error) {
-        console.error('MongoDB connection error:', error);
-        process.exit(1); // Exit process with failure
-    }
-});
 const port = 3000;
 app.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
     console.log(username, password);
-    const current_user = yield getUser(username, password);
+    const current_user = yield (0, retrieve_user_1.getUser)(username, password);
     if (current_user === null) {
         res.status(400).send(new Error('Username or Password incorrect'));
     }
@@ -84,12 +36,26 @@ app.post('/api/login', (req, res) => __awaiter(void 0, void 0, void 0, function*
 app.post('/api/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
     console.log(username, password);
-    const current_user = yield createUser(username, password);
+    const current_user = yield (0, retrieve_user_1.createUser)(username, password);
     res.json(current_user);
 }));
-app.get('/api/retrieve', (req, res) => {
-});
+app.get('/api/pokemon/list', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const nameList = yield (0, getAllPokemonNames_1.getAllPokemonNames)();
+    if (nameList === null) {
+        res.status(400).send(new Error('API Error'));
+    }
+    else {
+        let iconList = [];
+        let retList = [];
+        yield Promise.all(nameList.map((name) => __awaiter(void 0, void 0, void 0, function* () {
+            const pkmn = yield (0, getPokemonData_1.getPokemonData)(name);
+            console.log(pkmn.sprites.front_default);
+            retList.push({ name: name, icon: yield pkmn.sprites.front_default });
+        })));
+        console.log(retList);
+        res.json({ list: retList });
+    }
+}));
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(port);
-    yield connectDB();
+    yield (0, connect_1.connectDB)();
 }));
