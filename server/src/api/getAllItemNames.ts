@@ -1,28 +1,27 @@
 import { NamedAPIResource } from "../types/Common/NamedAPIResource";
 
-export interface PokemonRequest {
+export interface ItemRequest {
   count: number;
   next: string;
   previous: string;
   results: NamedAPIResource[];
 }
 
-export async function getAllPokemonNames() {
-    const url = 'https://pokeapi.co/api/v2/pokemon?limit=1302';
+export async function getAllItemNames() {
+    const url = 'https://pokeapi.co/api/v2/item?limit=2180';
     try {
         const response = await fetch(url)
         if (!response.ok) {
           throw new Error(`Response status: ${response.status}`);
         }
     
-        const pokeListJSON: PokemonRequest = await response.json() as PokemonRequest;
-        let pokeList: string[] = [];
-        pokeListJSON.results.forEach((pkmn) => {
-          pokeList.push(pkmn.name);
+        const itemListJSON: ItemRequest = await response.json() as ItemRequest;
+        let itemList: string[] = [];
+        itemListJSON.results.forEach((pkmn) => {
+          itemList.push(pkmn.name);
         });
 
-        console.log(pokeList);
-        return pokeList;
+        return itemList;
       } catch (error: any) {
         console.error(error.message);
         return null;

@@ -12,7 +12,7 @@ export async function getPokemonData(pokemon: string) {
 
         return pokemonJSON;
       } catch (error: any) {
-        console.error(error.message);
+        console.error(error.message, 'hi');
       }
 }
 

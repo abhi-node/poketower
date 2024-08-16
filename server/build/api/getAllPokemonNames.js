@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllPokemonNames = getAllPokemonNames;
 function getAllPokemonNames() {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = 'https://pokeapi.co/api/v2/pokemon?limit=151';
+        const url = 'https://pokeapi.co/api/v2/pokemon?limit=1302';
         try {
             const response = yield fetch(url);
             if (!response.ok) {

@@ -18,6 +18,8 @@ const cors_1 = __importDefault(require("cors"));
 const retrieve_user_1 = require("./db/retrieve_user");
 const connect_1 = require("./db/connect");
 const getAllPokemonNames_1 = require("./api/getAllPokemonNames");
+const getAllItemNames_1 = require("./api/getAllItemNames");
+const getItemData_1 = require("./api/getItemData");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
@@ -40,19 +42,56 @@ app.post('/api/signup', (req, res) => __awaiter(void 0, void 0, void 0, function
     res.json(current_user);
 }));
 app.get('/api/pokemon/list', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const nameList = yield (0, getAllPokemonNames_1.getAllPokemonNames)();
+    const retrieved_list = yield (0, getAllPokemonNames_1.getAllPokemonNames)();
+    if (retrieved_list === null) {
+        res.status(400).send(new Error('API Error'));
+    }
+    else {
+        let iconList = [];
+        let retList = [];
+        const delay = (ms) => new Promise(res => setTimeout(res, ms));
+        console.log(retrieved_list);
+        const nameList = retrieved_list.filter(name => {
+            return !(name.toLowerCase().endsWith('mega') || name.toLowerCase().endsWith('gmax'));
+        });
+        console.log(nameList);
+        yield Promise.all(nameList.map((name) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                const pkmn = yield (0, getPokemonData_1.getPokemonData)(name);
+                retList.push({ name: name, icon: yield pkmn.sprites.front_default });
+                yield delay(500);
+            }
+            catch (error) {
+                console.log(error);
+            }
+        })));
+        console.log(retList);
+        res.json({ list: retList });
+    }
+}));
+app.get('/api/item/list', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const nameList = yield (0, getAllItemNames_1.getAllItemNames)();
     if (nameList === null) {
         res.status(400).send(new Error('API Error'));
     }
     else {
         let iconList = [];
         let retList = [];
+        const delay = (ms) => new Promise(res => setTimeout(res, ms));
+        let a = new Set(['medicine', 'held-items', 'choice', 'jewels', 'species-specific', 'plates', 'effort-training']);
         yield Promise.all(nameList.map((name) => __awaiter(void 0, void 0, void 0, function* () {
-            const pkmn = yield (0, getPokemonData_1.getPokemonData)(name);
-            console.log(pkmn.sprites.front_default);
-            retList.push({ name: name, icon: yield pkmn.sprites.front_default });
+            try {
+                const item = yield (0, getItemData_1.getItemData)(name);
+                if (a.has(item.category.name)) {
+                    retList.push({ name: name, icon: yield item.sprites.default });
+                    yield delay(500);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
         })));
-        console.log(retList);
+        console.log(a);
         res.json({ list: retList });
     }
 }));

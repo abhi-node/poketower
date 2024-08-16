@@ -9,20 +9,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPokemonData = getPokemonData;
-function getPokemonData(pokemon) {
+exports.getItemData = getItemData;
+function getItemData(item) {
     return __awaiter(this, void 0, void 0, function* () {
-        const url = 'https://pokeapi.co/api/v2/pokemon/'.concat(pokemon.toLowerCase());
+        const url = 'https://pokeapi.co/api/v2/item/'.concat(item.toLowerCase());
         try {
             const response = yield fetch(url);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
-            const pokemonJSON = yield response.json();
-            return pokemonJSON;
+            const itemJSON = yield response.json();
+            return itemJSON;
         }
         catch (error) {
-            console.error(error.message, 'hi');
+            console.error(error.message);
         }
     });
 }
